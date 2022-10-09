@@ -1,0 +1,1 @@
+这是一个思路，用Swin Transformer作为encoder，CoMER作为decoder。
