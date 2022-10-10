@@ -15,8 +15,12 @@
    也可以用screen
    
    'screen -R [终端名]'. 
+   
    按'ctrl+a d'终端放到后台. 
+   
    'screen -ls'查看终端. 
+   
    'screen -r [pid/终端名]'进入之前放在后台的终端.
+   
    在新终端里确定不用了，直接输入'exit'删除
  
