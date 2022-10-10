@@ -14,7 +14,7 @@
    
    也可以用screen
    
-   'screen -R [终端名]'. 
+   'screen -R [终端名]'. 新建终端
    
    按'ctrl+a d'终端放到后台. 
    
