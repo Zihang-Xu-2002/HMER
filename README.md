@@ -7,6 +7,11 @@
 
 
 ## 实现方法
+计划：把CoMER中的encoder改了，准备用DW-ViT,结构如下图
+
+注意：拼接函数可以考虑torch.cat。DW-ViT的头要改，官方给定的是一个分类头。在改forward过程中要加mask！
+
+
 
 # 一些技巧
 ## 后台挂起
