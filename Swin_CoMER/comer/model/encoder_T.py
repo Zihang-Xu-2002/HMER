@@ -328,8 +328,8 @@ class SwinTransformerBlock(nn.Module):
     Args:
         dim (int): Number of input channels.
         input_resolution (tuple[int]): Input resulotion.
-        num_heads (int): Number of attention heads.
-        window_size (int): Window size.
+        num_heads (int): Number of attention heads.  
+        window_size (int): Window size.    
         shift_size (int): Shift size for SW-MSA.
         mlp_ratio (float): Ratio of mlp hidden dim to embedding dim.
         qkv_bias (bool, optional): If True, add a learnable bias to query, key, value. Default: True
@@ -348,12 +348,15 @@ class SwinTransformerBlock(nn.Module):
         self.dim = dim
         self.input_resolution = input_resolution
         self.num_heads = num_heads
-        self.window_size = window_size.copy()
+        #self.window_size = window_size.copy() modified by xzh 2022.10.16 
+        self.window_size = window_size
         self.shift_size = shift_size
         self.mlp_ratio = mlp_ratio
         self.attn_mask = []
-        for i in range(len(self.window_size)):
-            if min(self.input_resolution) <= self.window_size[i]:
+        #for i in range(len(self.window_size)): modified by xzh 2022.10.16
+        for i in range(self.window_size):
+            #if min(self.input_resolution) <= self.window_size[i]:
+            if min(self.input_resolution) <= self.window_size:
                 # if window size is larger than input resolution, we don't partition windows
                 self.shift_size[i] = 0
                 self.window_size[i] = min(self.input_resolution)
@@ -517,7 +520,8 @@ class BasicLayer(nn.Module):
             SwinTransformerBlock(dim=dim, input_resolution=input_resolution,
                                  num_heads=num_heads, window_size=window_size,
                                  # shift_size=0 if (i % 2 == 0) else window_size // 2,
-                                 shift_size=np.zeros(len(window_size)) if (i % 2 == 0) else np.array(window_size) // 2,
+                                 #shift_size=np.zeros(len(window_size)) if (i % 2 == 0) else np.array(window_size) // 2, modified by xzh 2022.10.16
+                                 shift_size=np.zeros(window_size) if (i % 2 == 0) else np.array(window_size) // 2,
                                  mlp_ratio=mlp_ratio,
                                  qkv_bias=qkv_bias, qk_scale=qk_scale,
                                  drop=drop, attn_drop=attn_drop,
@@ -636,13 +640,18 @@ class DW_ViT(nn.Module):
         super().__init__()
         self.num_classes = num_classes
         self.num_layers = len(depths)
+        self.num_heads_all = () # added by xzh, 2022.10.16 to save number of heads of different layers
         self.embed_dim = embed_dim
         self.ape = ape
         self.patch_norm = patch_norm
         self.num_features = int(embed_dim * 2 ** (self.num_layers - 1))
         self.mlp_ratio = mlp_ratio
         self.window_size = window_size
-        self.record = [] #记录每层的值
+        # ======Start =====added by xzh, 2022.10.16============= 
+        for i in range(self.num_layers):
+            tmp = (3,)
+            self.num_heads_all = self.num_heads_all+tmp   
+        # ======End =====added by xzh, 2022.10.16=============      
         # split image into non-overlapping patches
         self.patch_embed = PatchEmbed(
             img_size=img_size, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim,
@@ -650,7 +659,6 @@ class DW_ViT(nn.Module):
         num_patches = self.patch_embed.num_patches
         patches_resolution = self.patch_embed.patches_resolution
         self.patches_resolution = patches_resolution
-  
 
         # absolute position embedding
         if self.ape:
@@ -669,7 +677,8 @@ class DW_ViT(nn.Module):
                                input_resolution=(patches_resolution[0] // (2 ** i_layer),
                                                  patches_resolution[1] // (2 ** i_layer)),
                                depth=depths[i_layer],
-                               num_heads=num_heads[i_layer],
+                               #num_heads=num_heads[i_layer], #modified by xzh, 2022.10.16
+                               num_heads=self.num_heads_all[i_layer],
                                window_size=window_size,
                                mlp_ratio=self.mlp_ratio,
                                qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -714,25 +723,12 @@ class DW_ViT(nn.Module):
 
         for layer in self.layers:
             x = layer(x)
-        
+
         x = self.norm(x)  # B L C
         x = self.avgpool(x.transpose(1, 2))  # B C 1
         x = torch.flatten(x, 1)
-        self.record.append(x)#把每层的值都加入记录数组（调用之前初始化的时候要单独把最初的x也加入数组）
         return x
-    
-    #FPN的上采样部分
-    def upsampling(self):
-        x = self.record[self.num_layers-1-i] #初始值为最后一层的feature
-        channel = x.shape[2]
-        for i in range(self.num_layers):
-            j = self.num_layers-1-i #要从后往前拼接
-            x = nn.UpsamplingNearest2d(scale_factor=2)(x)#按2*2的比列上采样 
-            x = nn.cat(self.record[j-1],x,2)#按照维度拼接
-            x = nn.Conv2d(in_channels=channel*2, out_channels=channel, kernel_size=1, stride=1, padding=0)#用1*1卷积核把它变回原来的channel
-        return x #返回最后一个上采样和拼接的结果
 
-    #我觉得要把分类头去掉的话直接不调用这个函数，调用forwad_features就行
     def forward(self, x):
         x = self.forward_features(x)
         x = self.head(x)
@@ -746,3 +742,20 @@ class DW_ViT(nn.Module):
         flops += self.num_features * self.patches_resolution[0] * self.patches_resolution[1] // (2 ** self.num_layers)
         flops += self.num_features * self.num_classes
         return flops
+
+net = DW_ViT()
+print(net)
+# def test_DW_VIT(net):
+#     """
+#     written by xzh
+#     """
+#     print("model structure")
+#     print(net)
+#     print("======test model======")
+#     net = DW_ViT()
+#     X = np.random.uniform(size=(1, 3, 224, 224))
+#     for blk in net:
+#         X = blk(X)
+#         print(blk.name, 'output shape:\t', X.shape)
+
+# test_DW_VIT()
