@@ -1,0 +1,195 @@
+SwinTransformer(
+  (stage1): Sequential(
+    (0): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+    (1): Rearrange('b c h w -> b h w c')
+    (2): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+    (3): Block(
+      (ln1): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=96, out_features=288, bias=True)
+        (linear): Linear(in_features=96, out_features=96, bias=True)
+      )
+      (drop_path): Identity()
+      (ln2): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=96, out_features=384, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=384, out_features=96, bias=True)
+      )
+    )
+    (4): Block(
+      (ln1): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=96, out_features=288, bias=True)
+        (linear): Linear(in_features=96, out_features=96, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.018)
+      (ln2): LayerNorm((96,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=96, out_features=384, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=384, out_features=96, bias=True)
+      )
+    )
+  )
+  (stage2): Sequential(
+    (0): Rearrange('b (h neih) (w neiw) c -> b h w (neiw neih c)', neih=2, neiw=2)
+    (1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+    (2): Linear(in_features=384, out_features=192, bias=False)
+    (3): Block(
+      (ln1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=192, out_features=576, bias=True)
+        (linear): Linear(in_features=192, out_features=192, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.036)
+      (ln2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=192, out_features=768, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=768, out_features=192, bias=True)
+      )
+    )
+    (4): Block(
+      (ln1): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=192, out_features=576, bias=True)
+        (linear): Linear(in_features=192, out_features=192, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.055)
+      (ln2): LayerNorm((192,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=192, out_features=768, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=768, out_features=192, bias=True)
+      )
+    )
+  )
+  (stage3): Sequential(
+    (0): Rearrange('b (h neih) (w neiw) c -> b h w (neiw neih c)', neih=2, neiw=2)
+    (1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+    (2): Linear(in_features=768, out_features=384, bias=False)
+    (3): Block(
+      (ln1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=384, out_features=1152, bias=True)
+        (linear): Linear(in_features=384, out_features=384, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.073)
+      (ln2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=384, out_features=1536, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=1536, out_features=384, bias=True)
+      )
+    )
+    (4): Block(
+      (ln1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=384, out_features=1152, bias=True)
+        (linear): Linear(in_features=384, out_features=384, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.091)
+      (ln2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=384, out_features=1536, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=1536, out_features=384, bias=True)
+      )
+    )
+    (5): Block(
+      (ln1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=384, out_features=1152, bias=True)
+        (linear): Linear(in_features=384, out_features=384, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.109)
+      (ln2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=384, out_features=1536, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=1536, out_features=384, bias=True)
+      )
+    )
+    (6): Block(
+      (ln1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=384, out_features=1152, bias=True)
+        (linear): Linear(in_features=384, out_features=384, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.127)
+      (ln2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=384, out_features=1536, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=1536, out_features=384, bias=True)
+      )
+    )
+    (7): Block(
+      (ln1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=384, out_features=1152, bias=True)
+        (linear): Linear(in_features=384, out_features=384, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.145)
+      (ln2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=384, out_features=1536, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=1536, out_features=384, bias=True)
+      )
+    )
+    (8): Block(
+      (ln1): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=384, out_features=1152, bias=True)
+        (linear): Linear(in_features=384, out_features=384, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.164)
+      (ln2): LayerNorm((384,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=384, out_features=1536, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=1536, out_features=384, bias=True)
+      )
+    )
+  )
+  (stage4): Sequential(
+    (0): Rearrange('b (h neih) (w neiw) c -> b h w (neiw neih c)', neih=2, neiw=2)
+    (1): LayerNorm((1536,), eps=1e-05, elementwise_affine=True)
+    (2): Linear(in_features=1536, out_features=768, bias=False)
+    (3): Block(
+      (ln1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=768, out_features=2304, bias=True)
+        (linear): Linear(in_features=768, out_features=768, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.182)
+      (ln2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=768, out_features=3072, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=3072, out_features=768, bias=True)
+      )
+    )
+    (4): Block(
+      (ln1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+      (msa): WMSA(
+        (embedding_layer): Linear(in_features=768, out_features=2304, bias=True)
+        (linear): Linear(in_features=768, out_features=768, bias=True)
+      )
+      (drop_path): DropPath(drop_prob=0.200)
+      (ln2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+      (mlp): Sequential(
+        (0): Linear(in_features=768, out_features=3072, bias=True)
+        (1): GELU()
+        (2): Linear(in_features=3072, out_features=768, bias=True)
+      )
+    )
+  )
+  (norm_last): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+  (mean_pool): Reduce('b h w c -> b c', 'mean')
+  (classifier): Linear(in_features=768, out_features=1000, bias=True)
+)
+torch.Size([3, 7, 7, 768])
+28288354

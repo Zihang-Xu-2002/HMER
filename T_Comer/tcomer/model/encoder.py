@@ -1,3 +1,4 @@
+import sys
 import math
 import torch
 import torch.nn as nn
@@ -17,7 +18,7 @@ import torch.nn.functional as F
 from einops.einops import rearrange
 from torch import FloatTensor, LongTensor
 
-from .pos_enc import ImgPosEnc
+from pos_enc import ImgPosEnc
 
 class WMSA(nn.Module):
     """ Self-attention module in Swin Transformer
@@ -190,40 +191,36 @@ class SwinTransformer(nn.Module):
             nn.init.constant_(m.bias, 0)
             nn.init.constant_(m.weight, 1.0)
 
-    def forward(self, x):
+    def forward(self, x,x_mask):
         x = self.stage1(x)
+        out_mask = x_mask[:, 0::2, 0::2]
         x = self.stage2(x)
+        out_mask = out_mask[:, 0::2, 0::2]
         x = self.stage3(x)
+        out_mask = x_mask[:, 0::2, 0::2]
         x = self.stage4(x)
+        out_mask = x_mask[:, 0::2, 0::2]
         x = self.norm_last(x)
 
-        x = self.mean_pool(x)
-        x = self.classifier(x)
-        return x
+        # x = self.mean_pool(x)
+        # x = self.classifier(x)
+        return x,out_mask
+    # def forward(self, x):
+    # '''
+    #    this function is the initial forword function
+    # '''
+    #     x = self.stage1(x)
+    #     x = self.stage2(x)
+    #     x = self.stage3(x)
+    #     x = self.stage4(x)
+    #     x = self.norm_last(x)
 
-# def Swin_T(num_classes, config=[2,2,6,2], dim=96, **kwargs):
-#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
+    #     # x = self.mean_pool(x)
+    #     # x = self.classifier(x)
+    #     return x
 
-# def Swin_S(num_classes, config=[2,2,18,2], dim=96, **kwargs):
-#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
 
-# def Swin_B(num_classes, config=[2,2,18,2], dim=128, **kwargs):
-#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
 
-# def Swin_L(num_classes, config=[2,2,18,2], dim=192, **kwargs):
-#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
-
-# if __name__ == '__main__':
-#     test_model = Swin_T(1000).cuda()
-#     n_parameters = sum(p.numel() for p in test_model.parameters() if p.requires_grad)
-#     print(test_model)
-#     dummy_input = torch.rand(3,3,224,224).cuda()
-#     output = test_model(dummy_input)
-#     print(output.size())
-#     # flops, params = profile(test_model, inputs=(dummy_input, ))
-#     # print(params)
-#     # print(flops)
-#     print(n_parameters)
 
 class Encoder(pl.LightningModule):
     def __init__(self, d_model:int, numclass,config=[2,2,26],dim=96,**kwargs):
@@ -267,3 +264,31 @@ class Encoder(pl.LightningModule):
 
         # flat to 1-D
         return feature, mask
+
+
+# The code here are used to test the swin transformer
+# def Swin_T(num_classes, config=[2,2,6,2], dim=96, **kwargs):
+#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
+
+# def Swin_S(num_classes, config=[2,2,18,2], dim=96, **kwargs):
+#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
+
+# def Swin_B(num_classes, config=[2,2,18,2], dim=128, **kwargs):
+#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
+
+# def Swin_L(num_classes, config=[2,2,18,2], dim=192, **kwargs):
+#     return SwinTransformer(num_classes, config=config, dim=dim, **kwargs)
+
+# if __name__ == '__main__':
+#     test_model = Swin_T(1000).cuda()
+#     n_parameters = sum(p.numel() for p in test_model.parameters() if p.requires_grad)
+#     f=open('test_swin_transformer.log', mode='w', encoding='utf-8')
+#     print(test_model,file=f)
+#     dummy_input = torch.rand(3,3,224,224).cuda()
+#     output = test_model(dummy_input)
+#     print(output.size(),file=f)
+#     # flops, params = profile(test_model, inputs=(dummy_input, ))
+#     # print(params)
+#     # print(flops)
+#     print(n_parameters,file=f)
+#     f.close()
