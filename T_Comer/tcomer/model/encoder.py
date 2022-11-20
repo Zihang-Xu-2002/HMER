@@ -233,7 +233,7 @@ class Encoder(pl.LightningModule):
 
         self.feature_proj = nn.Conv2d(self.model.dim * 8,d_model,kernel_size=1)
 
-        self.pos_enc_2d - ImgPosEnc(d_model,normalize=True)
+        self.pos_enc_2d = ImgPosEnc(d_model,normalize=True)
 
         self.norm = nn.LayerNorm(d_model)
 
