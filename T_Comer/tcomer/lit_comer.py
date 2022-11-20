@@ -40,8 +40,7 @@ class LitCoMER(pl.LightningModule):
 
         self.comer_model = CoMER(
             d_model=d_model,
-            growth_rate=growth_rate,
-            num_layers=num_layers,
+            num_class=num_class,
             nhead=nhead,
             num_decoder_layers=num_decoder_layers,
             dim_feedforward=dim_feedforward,
