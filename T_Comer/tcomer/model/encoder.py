@@ -138,6 +138,7 @@ class SwinTransformer(nn.Module):
     In this Implementation, the standard shape of data is (b h w c), which is a similar protocal as cnn.
     """
     #TODO make layers using configs
+    # num_class is unnecessary
     def __init__(self, num_classes, config=[2,2,6,2], dim=96, drop_path_rate=0.2, input_resolution=224):
         super(SwinTransformer, self).__init__()
         self.config = config
