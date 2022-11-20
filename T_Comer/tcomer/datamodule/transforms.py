@@ -27,6 +27,7 @@ class ScaleToLimitRange:
             img = cv2.resize(
                 img, None, fx=scale_r, fy=scale_r, interpolation=cv2.INTER_LINEAR
             )
+            img = cv2.resize(img,(224,224))
             return img
 
         scale_r = max(self.h_lo / h, self.w_lo / w)
@@ -35,6 +36,7 @@ class ScaleToLimitRange:
             img = cv2.resize(
                 img, None, fx=scale_r, fy=scale_r, interpolation=cv2.INTER_LINEAR
             )
+            img = cv2.resize(img,(224,224))
             return img
 
         # in the rectangle, do not scale
@@ -51,4 +53,5 @@ class ScaleAugmentation:
     def __call__(self, img: np.ndarray) -> np.ndarray:
         k = np.random.uniform(self.lo, self.hi)
         img = cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_LINEAR)
+        img = cv2.resize(img,(224,224))
         return img
