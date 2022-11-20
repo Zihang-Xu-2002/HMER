@@ -231,7 +231,7 @@ class Encoder(pl.LightningModule):
 
         self.model = SwinTransformer(num_classes=numclass, config=config, dim=dim, **kwargs)
 
-        self.feature_proj = nn.Conv2(self.model.dim * 8,d_model,kernel_size=1)
+        self.feature_proj = nn.Conv2d(self.model.dim * 8,d_model,kernel_size=1)
 
         self.pos_enc_2d - ImgPosEnc(d_model,normalize=True)
 
