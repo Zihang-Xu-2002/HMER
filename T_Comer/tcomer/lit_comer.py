@@ -16,8 +16,7 @@ class LitCoMER(pl.LightningModule):
         self,
         d_model: int,
         # encoder
-        growth_rate: int,
-        num_layers: int,
+        num_class:int,
         # decoder
         nhead: int,
         num_decoder_layers: int,

@@ -14,8 +14,7 @@ class CoMER(pl.LightningModule):
     def __init__(
         self,
         d_model: int,
-        growth_rate: int,
-        num_layers: int,
+        num_class:int,
         nhead: int,
         num_decoder_layers: int,
         dim_feedforward: int,
@@ -27,7 +26,7 @@ class CoMER(pl.LightningModule):
         super().__init__()
 
         self.encoder = Encoder(
-            d_model=d_model, growth_rate=growth_rate, num_layers=num_layers
+            d_model=d_model,numclass=num_class
         )
         self.decoder = Decoder(
             d_model=d_model,
