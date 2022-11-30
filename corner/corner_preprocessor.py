@@ -93,5 +93,3 @@ def tensor_to_PIL(tensor):
 img_corner = tensor_to_PIL(cornermap)
 img_corner.show()
 img_corner.save('result.png')
-img_cat = torch.cat((img_tensor,cornermap),1)
-print(img_cat.shape)
