@@ -16,6 +16,7 @@
 # 一些技巧
 ## 后台挂起
    nohup : http://t.csdn.cn/FrqDm
+   命令：nohup command > myout.file 2>&1 &
    
    也可以用screen
    
