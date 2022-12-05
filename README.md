@@ -16,7 +16,10 @@
 # 一些技巧
 ## 后台挂起
    nohup : http://t.csdn.cn/FrqDm
+   
    命令：nohup command > myout.file 2>&1 &
+   
+   注：退出终端之后用jobs看不到nohup挂起的文件，要用ps/ps-aux
    
    也可以用screen
    
